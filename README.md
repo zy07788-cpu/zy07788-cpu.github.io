@@ -1,12 +1,13 @@
 # 茶叶的实验室
 
-个人作品展示网站，包含论文写作与排版 Skill、唐布里鸭 Mac 桌面玩具。
+个人作品展示网站，包含论文写作与排版 Skill、唐布里鸭 Mac 桌面玩具与小抽屉微信小程序。
 
 ## 页面
 
 - `index.html`：个人介绍与作品入口。
 - `thesis.html`：Skill 介绍、使用方法与下载。
 - `duck.html`：小鸭动作演示、Mac 下载与安装说明。
+- `drawer.html`：小抽屉介绍与虚构内容的界面演示；当前私下体验中。
 - `privacy.html`：隐私说明。
 
 使用原生 HTML、CSS 与 JavaScript，无构建依赖；使用 GitHub Pages 的 main 分支根目录发布。无需独立域名。
