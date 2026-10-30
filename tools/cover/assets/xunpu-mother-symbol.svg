@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="440" viewBox="0 0 44 44" role="img" aria-labelledby="title desc">
+  <title id="title">寻璞母品牌暂定图形标志 v0.1</title>
+  <desc id="desc">2026-10-01用户暂定采用。原样提取个人版Web内嵌SVG的两条路径，透明背景，不含字体、位图或外部依赖。</desc>
+  <g fill="none" stroke="#081d19" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 5h20a7 7 0 0 1 7 7v20a7 7 0 0 1-7 7H12a7 7 0 0 1-7-7V12a7 7 0 0 1 7-7Z"/>
+    <path d="M15 11h18v8H20a8 8 0 1 0 8 8v-3h-8"/>
+  </g>
+</svg>
