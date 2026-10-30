@@ -5,7 +5,7 @@
 ## 页面
 
 - `index.html`：个人介绍与作品入口。
-- `thesis.html`：Skill 介绍、使用方法与下载。
+- `thesis.html`：Skill 介绍、使用方法与公众号领取入口。
 - `duck.html`：小鸭动作演示、Mac 下载与安装说明。
 - `drawer.html`：小抽屉介绍与虚构内容的界面演示；当前私下体验中。
 - `privacy.html`：隐私说明。
@@ -14,6 +14,8 @@
 使用原生 HTML、CSS 与 JavaScript，无构建依赖；使用 GitHub Pages 的 main 分支根目录发布。无需独立域名。
 
 ## 下载
+
+MBA 完整 Skill 请在微信公众号「茶叶的小喇叭」回复「MBA论文」领取。其他作品保持原有的开放下载、在线使用或展示入口；网页不验证关注状态。
 
 `downloads/SHA256SUMS.txt` 提供下载包校验值。Skill 需配合 AI 工具使用；小鸭为个人同人作品，Mac 版尚未完成 Developer ID 签名与公证。具体使用与验证边界见项目页面。
 
