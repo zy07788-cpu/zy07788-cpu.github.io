@@ -80,3 +80,5 @@
 
 .drawer-visual .drawer-stack{width:215px;transform:translateY(24px) rotate(-6deg)}
 .drawer-visual .drawer-slip{min-height:200px;padding:22px}
+
+.cover-visual{background:#f3f0e8 url("tools/cover/assets/risk.png") center/cover no-repeat}.cover-sample{position:absolute;left:8%;top:35%;color:#102923;font-family:Georgia,"Songti SC",serif;font-size:clamp(24px,3vw,42px);line-height:1.35}.cover-sample strong{font-weight:600}
