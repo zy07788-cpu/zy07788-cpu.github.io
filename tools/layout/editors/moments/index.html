@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'none'">
+  <title>朋友圈B编辑器</title>
+  <link rel="stylesheet" href="./styles.css?v=e584159048f79e2b">
+</head>
+<body>
+  <main class="editor-shell" aria-label="朋友圈B编辑器">
+    <section class="controls" aria-labelledby="editor-heading">
+      <header class="editor-heading"><h1 id="editor-heading">朋友圈B</h1><span id="save-state" aria-live="polite">示例</span></header>
+      <form id="editor-form" autocomplete="off">
+        <fieldset class="background-picker"><legend>背景</legend><div class="background-options"><button type="button" data-background="solid" aria-pressed="false"><span class="swatch solid-swatch" aria-hidden="true"></span>纯色</button><button type="button" data-background="paper" aria-pressed="true"><span class="swatch paper-swatch" aria-hidden="true"></span>雾蓝纸画</button></div></fieldset>
+        <label class="field" id="palette-field" hidden>纯色配色<select id="solid-palette" name="solid-palette"></select></label>
+        <div class="identity-fields">
+          <label class="field">昵称<input id="display-name" name="display-name" type="text" maxlength="40"></label>
+          <label class="field">头像文字<input id="avatar-text" name="avatar-text" type="text" maxlength="8"></label>
+        </div>
+        <label class="field">账号／备注<input id="account-id" name="account-id" type="text" maxlength="60"></label>
+        <label class="field">日期<input id="published-at" name="published-at" type="text" maxlength="40" placeholder="选填"></label>
+        <label class="field">标题<textarea id="title" name="title" rows="2" maxlength="300" placeholder="换行可调整标题分行"></textarea></label>
+        <label class="field body-field">正文<textarea id="body" name="body" rows="7" maxlength="10000" placeholder="保留段落与换行，可用 **加粗** 标记重点。"></textarea><span id="body-count" class="field-note"></span></label>
+
+        <details class="adjustments" id="layout-adjustments">
+          <summary>微调版面</summary>
+          <div class="adjustment-content">
+            <label class="range-field" for="top"><span>上方留白 <output data-value-for="top"></output></span><input id="top" type="range" min="0" max="400" step="4"></label>
+            <label class="range-field" for="side"><span>左右留白 <output data-value-for="side"></output></span><input id="side" type="range" min="64" max="480" step="4"></label>
+            <label class="range-field" for="bottom"><span>下方留白 <output data-value-for="bottom"></output></span><input id="bottom" type="range" min="0" max="1000" step="4"></label>
+            <div class="two-columns">
+              <label class="range-field" for="title-size"><span>标题字号 <output data-value-for="title-size"></output></span><input id="title-size" type="range" min="32" max="120" step="1"></label>
+              <label class="range-field" for="body-size"><span>正文字号 <output data-value-for="body-size"></output></span><input id="body-size" type="range" min="24" max="64" step="1"></label>
+            </div>
+            <div class="two-columns">
+              <label class="range-field" for="title-gap"><span>标题上间距 <output data-value-for="title-gap"></output></span><input id="title-gap" type="range" min="0" max="200" step="2"></label>
+              <label class="range-field" for="body-gap"><span>正文上间距 <output data-value-for="body-gap"></output></span><input id="body-gap" type="range" min="0" max="160" step="2"></label>
+            </div>
+            <div class="two-columns">
+              <label class="range-field" for="line-height"><span>正文行距 <output data-value-for="line-height"></output></span><input id="line-height" type="range" min="1.2" max="2.4" step="0.01"></label>
+              <label class="range-field" for="paragraph-gap"><span>段间距 <output data-value-for="paragraph-gap"></output></span><input id="paragraph-gap" type="range" min="0" max="100" step="1"></label>
+            </div>
+            <label class="field">调整对象<select id="selected-group"><option value="identity">昵称与头像</option><option value="title">标题</option><option value="body">正文</option></select></label>
+            <div class="two-columns">
+              <label class="field">横向偏移<input id="offset-x" type="number" min="-480" max="480" step="1"></label>
+              <label class="field">纵向偏移<input id="offset-y" type="number" min="-720" max="720" step="1"></label>
+            </div>
+            <div class="color-fields">
+              <label for="title-color">标题颜色<input id="title-color" type="color"></label>
+              <label for="body-color">正文颜色<input id="body-color" type="color"></label>
+              <label for="accent-color">强调颜色<input id="accent-color" type="color"></label>
+            </div>
+            <button id="reset-layout" type="button" class="quiet">恢复当前背景的默认版面</button>
+          </div>
+        </details>
+        <div class="project-actions"><button id="download-png" type="button" class="primary" disabled>下载 PNG</button><button id="save-project" type="button">保存工程</button><button id="load-project" type="button">载入工程</button></div>
+        <input id="project-file" type="file" accept="application/json,.json" aria-label="选择排版工程文件" hidden>
+        <div class="small-actions"><button id="load-sample" type="button" class="quiet">恢复示例</button><button id="clear-content" type="button" class="quiet">清空内容</button></div>
+        <p id="layout-errors" class="error" role="alert" hidden></p>
+        <p id="status" class="status" role="status" aria-live="polite">正在准备预览…</p>
+
+        <details class="feedback" id="feedback-panel"><summary>需要AI调整</summary><label class="field">想调整什么<textarea id="feedback-notes" rows="3" maxlength="5000" placeholder="例如：标题再向下一点，换一张更安静的风景。"></textarea></label><button id="download-feedback" type="button">下载反馈包</button><p class="field-note">下载后交给AI，不会自动发送。</p></details>
+      </form>
+    </section>
+    <section class="preview-pane" aria-labelledby="preview-heading">
+      <header class="preview-heading"><h2 id="preview-heading">成品预览</h2><span>1440 × 1920</span></header>
+      <div class="canvas-wrap"><canvas id="moments-canvas" width="1440" height="1920" tabindex="0" role="img" aria-label="朋友圈排版预览，可拖动文字；选中后用方向键移动，Shift加速。"></canvas></div>
+      <div class="preview-options"><label><input id="show-safe-area" type="checkbox">显示阅读安全区</label><span>拖动可移动文字</span></div>
+    </section>
+  </main>
+  <script type="module" src="./app.mjs?v=e584159048f79e2b"></script>
+</body>
+</html>
