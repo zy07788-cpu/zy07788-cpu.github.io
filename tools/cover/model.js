@@ -11,6 +11,12 @@
   function dimensionsFor(profile,state={}){
     return profile==='poster'?{wide:[1440,state.format==='3:5'?2400:1920],square:[1080,1080]}:{wide:[1880,800],square:[800,800]};
   }
+  function coverGeometry(state,aspect='wide'){
+    const [width,height]=dimensionsFor(state.documentType,state)[aspect];
+    if(state.style==='d1')return{photo:aspect==='wide'?{x:132,y:250,width:1176,height:1040}:{x:81,y:96,width:918,height:540},shadowHeight:0};
+    if(state.style==='d2')return{photo:{x:0,y:0,width,height},shadowHeight:aspect==='wide'?1220:Math.round(height*.58)};
+    return null;
+  }
   function createState(profile,library,presets,art='ivory',sample=false,presetId){
     const p=presets.find(p=>p.id===presetId)||presets.find(p=>p.art===art)||presets[0];
     const a=library.find(a=>a.id===art)||library[0];
@@ -44,27 +50,67 @@
       elements.find(e=>e.id==='title').layout.wide=layout(104,450,134,1210,1.3);
       elements.find(e=>e.id==='subtitle').layout.wide=layout(110,870,46,1160,1.6);
     }
+    if(p.style==='d1'||p.style==='d2'){
+      const framed=p.style==='d1';
+      state.format='3:5';state.paper=framed?'#FBFAF6':'#0B1722';
+      state.background.wide.focusY=.5;state.background.square.focusY=.5;
+      elements.forEach(e=>e.enabled=sample&&(framed?['column','title','rule']:['title','subtitle']).includes(e.id));
+      for(const e of elements){e.color=framed?'#4F675E':'#F2EEE3';if(['brandCN','brandEN','account'].includes(e.id))e.text='';}
+      Object.assign(elements.find(e=>e.id==='title'),{font:framed?'article':'sans',layout:{wide:framed?layout(132,1362,92,1120,1.28):layout(120,300,150,1200,1.18),square:framed?layout(81,690,64,918,1.28):layout(90,145,94,900,1.18)}});
+      elements.find(e=>e.id==='subtitle').layout={wide:layout(120,718,48,1200,1.55),square:layout(90,420,34,900,1.55)};
+      elements.find(e=>e.id==='column').layout={wide:layout(132,124,34,1176,1.7),square:layout(81,42,26,918,1.5)};
+      elements.find(e=>e.id==='rule').layout={wide:layout(132,180,2,1176),square:layout(81,83,2,918)};
+      elements.find(e=>e.id==='author').layout={wide:layout(132,2236,32,1040,1.625),square:layout(81,984,25,800,1.6)};
+      if(framed)elements.push(text('pageNumber','页码',sample?'01':'','sans','#4F675E',layout(1238,2236,32,70,1.625),layout(929,984,25,70,1.6)));
+    }
     return state;
   }
+  function inspectData(value,depth=0,seen=new Set()){
+    if(depth>10)throw new Error('方案结构过深。');
+    if(value===null||typeof value!=='object'){if(!['string','number','boolean','undefined'].includes(typeof value)&&value!==null)throw new Error('方案字段类型无效。');return;}
+    if(seen.has(value))throw new Error('方案不能包含循环引用。');seen.add(value);
+    const proto=Object.getPrototypeOf(value);
+    if(!Array.isArray(value)&&proto!==Object.prototype&&proto!==null){
+      const constructor=Object.getOwnPropertyDescriptor(proto,'constructor');
+      if(Object.getPrototypeOf(proto)!==null||!constructor||constructor.get||constructor.set||typeof constructor.value!=='function'||Function.prototype.toString.call(constructor.value)!=='function Object() { [native code] }')throw new Error('方案必须是普通数据。');
+    }
+    if(Array.isArray(value)&&value.length>50)throw new Error('方案元素过多。');
+    for(const [key,descriptor]of Object.entries(Object.getOwnPropertyDescriptors(value))){
+      if(['__proto__','prototype','constructor','toJSON'].includes(key)||descriptor.get||descriptor.set)throw new Error('方案包含不允许的字段。');
+      inspectData(descriptor.value,depth+1,seen);
+    }
+    seen.delete(value);
+  }
+  function keysOnly(value,allowed){
+    if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(key=>!allowed.includes(key)))throw new Error('方案包含未知字段。');
+  }
   function validateState(input,profile,library){
+    inspectData(input);
+    keysOnly(input,['schemaVersion','documentType','format','templateId','art','customBackground','customLogo','customLabel','material','paper','style','background','elements','activeMode']);
     const allowed=library.map(a=>a.id).concat('custom');
     if(!input||![2,3].includes(input.schemaVersion)||!allowed.includes(input.art)||!Array.isArray(input.elements)||input.elements.length>50)throw new Error('这不是本编辑器保存的有效方案。');
     if((input.documentType||(input.schemaVersion===2?'cover':null))!==profile)throw new Error(profile==='poster'?'这是公众号封面方案，请在公众号编辑器中载入。':'这是图文首页图方案，请在图文编辑器中载入。');
+    if(input.activeMode!==undefined&&!['wide','square'].includes(input.activeMode))throw new Error('当前画幅无效。');
     const s=clone(input),num=(n,min,max)=>Number.isFinite(n)&&n>=min&&n<=max;
     if(s.schemaVersion===2){s.schemaVersion=3;s.documentType='cover';s.style='legacy';s.format='3:4';}
-    if(!['paper','full','fade','frame','immersive','legacy'].includes(s.style)||!['3:4','3:5'].includes(s.format)||!hex.test(s.paper))throw new Error('画布参数无效。');
+    if(!['paper','full','fade','frame','immersive','legacy','d1','d2'].includes(s.style)||!['3:4','3:5'].includes(s.format)||!hex.test(s.paper))throw new Error('画布参数无效。');
+    if(s.templateId!==undefined&&(typeof s.templateId!=='string'||!/^[A-Za-z0-9._-]{1,100}$/.test(s.templateId)))throw new Error('模板参数无效。');
     for(const key of ['customBackground','customLogo'])if(s[key]!==null&&s[key]!==undefined&&!validDataImage(s[key]))throw new Error('方案图片无效。');
     if(s.art==='custom'&&!s.customBackground)throw new Error('方案缺少自定义底图。');
     if(s.customLabel!==undefined&&s.customLabel!==null&&(typeof s.customLabel!=='string'||s.customLabel.length>100))throw new Error('底图名称无效。');
-    if(s.material!==undefined&&s.material!==null){const m=s.material;if(!m||!['paper','canvas','wash','cutpaper'].includes(m.style)||!hex.test(m.base)||!hex.test(m.accent)||!num(m.seed,1,4294967295)||!Number.isInteger(m.seed)||!num(m.intensity,0,100))throw new Error('材质参数无效。');}
-    for(const aspect of ['wide','square']){const v=s.background?.[aspect];if(!v||!num(v.focusX,0,1)||!num(v.focusY,0,1)||!num(v.zoom,1,2.4))throw new Error('底图位置参数无效。');}
+    if(s.material!==undefined&&s.material!==null){const m=s.material;keysOnly(m,['style','base','accent','seed','intensity']);if(!['paper','canvas','wash','cutpaper'].includes(m.style)||!hex.test(m.base)||!hex.test(m.accent)||!num(m.seed,1,4294967295)||!Number.isInteger(m.seed)||!num(m.intensity,0,100))throw new Error('材质参数无效。');}
+    keysOnly(s.background,['wide','square']);
+    for(const aspect of ['wide','square']){const v=s.background?.[aspect];keysOnly(v,aspect==='square'?['focusX','focusY','zoom','mode']:['focusX','focusY','zoom']);if(!num(v.focusX,0,1)||!num(v.focusY,0,1)||!num(v.zoom,1,2.4))throw new Error('底图位置参数无效。');}
     if(!['editorial','cover'].includes(s.background.square.mode))throw new Error('方图布局无效。');
     const ids=new Set();
     for(const e of s.elements){
+      keysOnly(e,['id','name','type','enabled','opacity','color','layout','text','font','alignLogoBottom']);
       if(typeof e.id!=='string'||e.id.length>100||ids.has(e.id)||typeof e.name!=='string'||e.name.length>100||!['text','logo','rule'].includes(e.type)||typeof e.enabled!=='boolean'||!num(e.opacity,0,1)||!hex.test(e.color))throw new Error('元素参数无效。');ids.add(e.id);
-      if(e.type==='text'&&(typeof e.text!=='string'||e.text.length>2000||!['cn','en','sans'].includes(e.font)))throw new Error('文字参数无效。');
-      if(['brandCN','brandEN'].includes(e.id)){if(e.alignLogoBottom!==undefined&&(!e.alignLogoBottom||typeof e.alignLogoBottom!=='object'||Array.isArray(e.alignLogoBottom)||['wide','square'].some(aspect=>e.alignLogoBottom[aspect]!==undefined&&typeof e.alignLogoBottom[aspect]!=='boolean')))throw new Error('品牌对齐参数无效。');e.alignLogoBottom={wide:e.alignLogoBottom?.wide!==false,square:e.alignLogoBottom?.square!==false};}
-      for(const aspect of ['wide','square']){const l=e.layout?.[aspect];if(!l||!num(l.x,-4000,4000)||!num(l.y,-4000,4000)||!num(l.size,1,800)||!num(l.width,20,2400)||!num(l.lineHeight,.8,3)||!['left','center','right'].includes(l.align))throw new Error('元素排版参数无效。');}
+      if(e.type==='text'&&(typeof e.text!=='string'||e.text.length>2000||!['cn','en','sans','article'].includes(e.font)))throw new Error('文字参数无效。');
+      if(e.alignLogoBottom!==undefined){keysOnly(e.alignLogoBottom,['wide','square']);if(['wide','square'].some(aspect=>e.alignLogoBottom[aspect]!==undefined&&typeof e.alignLogoBottom[aspect]!=='boolean'))throw new Error('品牌对齐参数无效。');}
+      if(['brandCN','brandEN'].includes(e.id))e.alignLogoBottom={wide:e.alignLogoBottom?.wide!==false,square:e.alignLogoBottom?.square!==false};
+      keysOnly(e.layout,['wide','square']);
+      for(const aspect of ['wide','square']){const l=e.layout?.[aspect];keysOnly(l,['x','y','size','width','lineHeight','align']);if(!num(l.x,-4000,4000)||!num(l.y,-4000,4000)||!num(l.size,1,800)||!num(l.width,20,2400)||!num(l.lineHeight,.8,3)||!['left','center','right'].includes(l.align))throw new Error('元素排版参数无效。');}
     }
     return s;
   }
@@ -72,6 +118,10 @@
     if(state.documentType!=='poster'||!['3:4','3:5'].includes(format))throw new Error('图文画幅无效。');
     const before=dimensionsFor('poster',state).wide[1];
     state.format=format;const factor=dimensionsFor('poster',state).wide[1]/before;
+    if(['d1','d2'].includes(state.style)){
+      for(const e of state.elements)if(['author','pageNumber'].includes(e.id))e.layout.wide.y=dimensionsFor('poster',state).wide[1]-164;
+      return state;
+    }
     for(const e of state.elements)e.layout.wide.y=Math.max(-4000,Math.min(4000,Math.round(e.layout.wide.y*factor)));
     return state;
   }
@@ -80,5 +130,5 @@
     for(const e of state.elements)e.enabled=e.type==='text'?Boolean(e.text.trim()):e.type==='logo'?Boolean(e.enabled||state.customLogo||namedCompany):true;
     return state;
   }
-  return Object.freeze({createState,validateState,dimensionsFor,changeFormat,showFilled,validDataImage});
+  return Object.freeze({createState,validateState,dimensionsFor,coverGeometry,changeFormat,showFilled,validDataImage});
 });

@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 1,
+  "editor": "layout-studio",
+  "version": "e584159048f79e2b",
+  "files": [
+    {
+      "path": "tools/cover/.nojekyll",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tools/cover/app-info.json",
+      "bytes": 85,
+      "sha256": "918748e4120c912f7e482d524987ce43b4631bdf6d228cefa50654e34a57e5d6"
+    },
+    {
+      "path": "tools/cover/assets/news.png",
+      "bytes": 2376349,
+      "sha256": "9fdc46bbe137a460d212b9663527e2e1b2b4b77b64f25f3c9ba707b262ea573c"
+    },
+    {
+      "path": "tools/cover/assets/oil-blue.png",
+      "bytes": 2837927,
+      "sha256": "898ca0b419fa0c26ca2f8f3efc01fa09f9429fb3bde89410ff81fbdc598f8351"
+    },
+    {
+      "path": "tools/cover/assets/oil-sage.png",
+      "bytes": 3031754,
+      "sha256": "6fa7cfd401ed53ad5e90b6d012176096e829d7492ceeedacc85846394085ea14"
+    },
+    {
+      "path": "tools/cover/assets/paint-cover.png",
+      "bytes": 3784995,
+      "sha256": "b226ef7ad06fc524afa0ded263d424213ed01064479e02b3c478ffc7c0b60e75"
+    },
+    {
+      "path": "tools/cover/assets/paint-drawer.png",
+      "bytes": 3963441,
+      "sha256": "ccc61f9ec29193c5da47dee7260637fcf5d6f623f6e001bb4a7d60a54b6d029e"
+    },
+    {
+      "path": "tools/cover/assets/paint-duck.png",
+      "bytes": 3515463,
+      "sha256": "2ac594e9287afbc4aa1a356cb9df7c5533b9c99183047bc5eb315b975783de90"
+    },
+    {
+      "path": "tools/cover/assets/paint-thesis.png",
+      "bytes": 4147065,
+      "sha256": "e5c0407bbfdb368a047cae537c910969fdb1f8c7d2e9d1aeef1d4f39bbcd79d6"
+    },
+    {
+      "path": "tools/cover/assets/paper-grain.svg",
+      "bytes": 323,
+      "sha256": "cbfacc30375fb3de2299627e68ad0055ae719c3bf9f5a035570977fa34b2a7f7"
+    },
+    {
+      "path": "tools/cover/assets/paper-ivory.png",
+      "bytes": 2657841,
+      "sha256": "7430cd961a82fdf9d6d96cc40ecbbbb1d1b949d7eae817e3201f9cae34f3be98"
+    },
+    {
+      "path": "tools/cover/assets/personal.png",
+      "bytes": 2262855,
+      "sha256": "c613e1225358405487ec010b5c96c62e2cdd10e73f2fdd9a44932d3e45646d04"
+    },
+    {
+      "path": "tools/cover/assets/risk.png",
+      "bytes": 2464989,
+      "sha256": "7cd5cc5279e88f3c9491af009281404360bb7d20962815c345cc57c22f033f65"
+    },
+    {
+      "path": "tools/cover/assets/xunpu-mother-symbol.svg",
+      "bytes": 610,
+      "sha256": "145bbc16ff2288f15195ec88154c79ff6b057f57650a4e4eaad85798fc05dc0a"
+    },
+    {
+      "path": "tools/cover/background-maker.js",
+      "bytes": 9060,
+      "sha256": "3ff3ef4cb4c3da2517795801c9a956c1d5f9a0fcb094d8a343d78e7562ed18cf"
+    },
+    {
+      "path": "tools/cover/bridge.js",
+      "bytes": 2896,
+      "sha256": "c5a7e1d702a83e5e12a9861a9db1a07ee1f11ac5e5c17d989219e897379e9ed4"
+    },
+    {
+      "path": "tools/cover/config.js",
+      "bytes": 4340,
+      "sha256": "a2395b1c0fa213fc6a2c86defdb9ec7aeb2daeef66cb231ed1600ce163a1edcc"
+    },
+    {
+      "path": "tools/cover/cover.js",
+      "bytes": 40403,
+      "sha256": "e0bd7cd9d384a3169cc6b1ef84dc9b9ea9776a770cc144a4f65c2891d2bfc5b6"
+    },
+    {
+      "path": "tools/cover/embed.css",
+      "bytes": 3471,
+      "sha256": "a3e7a7da81c7d15e7655a209f2a1d91d98d8d50c7d99d97b7240fce90742b3b0"
+    },
+    {
+      "path": "tools/cover/fonts/SourceHanSerif-LICENSE.txt",
+      "bytes": 4463,
+      "sha256": "9ff5bb567e1b92c801fc1069e5fbf992ff8efccacb9db94e5959a5b3ba9bb903"
+    },
+    {
+      "path": "tools/cover/fonts/SourceHanSerifCN-SemiBold.woff2",
+      "bytes": 8673764,
+      "sha256": "d6e5214733d9c6fc5203eed5993a63293eb850b076dfbde16938fb9be834f9b2"
+    },
+    {
+      "path": "tools/cover/fonts/SourceSerif4-LICENSE.md",
+      "bytes": 4491,
+      "sha256": "c21d7293d87b6d7ab1d0229a2f55b77f33a7613a6a4e66f6693d68d7d8d09464"
+    },
+    {
+      "path": "tools/cover/fonts/SourceSerif4-Regular.woff2",
+      "bytes": 107408,
+      "sha256": "42aa010dbb82d90764a28f6cc7d809a9395999b7390eb3b212028c6975e97402"
+    },
+    {
+      "path": "tools/cover/index.html",
+      "bytes": 10014,
+      "sha256": "3d8d4dafab96d3870da712e492a45d2af577bcfcabec57080c9cc90acf39dac1"
+    },
+    {
+      "path": "tools/cover/model.js",
+      "bytes": 12647,
+      "sha256": "8312c14ee228c5158b6ee96799cd5cc924d35bf75de38afcd9450b8655b2c970"
+    },
+    {
+      "path": "tools/cover/studio.css",
+      "bytes": 6551,
+      "sha256": "bb8c438ff9a294c6251a4744d8c9af68051057b6e21d11a7bd001256340f29e0"
+    },
+    {
+      "path": "tools/cover/style.css",
+      "bytes": 5981,
+      "sha256": "a674f11b17254f683abe77dad3fd7e2869e88553a447ec87ee4cd42a50c27bcc"
+    },
+    {
+      "path": "tools/cover/theme.css",
+      "bytes": 4733,
+      "sha256": "15a5fe0743cfa90f8b842ac42db8f9b67ccd8d0b723f327193db0e7d5666dbb3"
+    },
+    {
+      "path": "tools/layout/articles/app.mjs",
+      "bytes": 17250,
+      "sha256": "6ed72c04dd3db4f25a0c720affd3c407914d99f02e9805a8e3e635c2254037f6"
+    },
+    {
+      "path": "tools/layout/articles/canvas.mjs",
+      "bytes": 12380,
+      "sha256": "068f8113c22312303d07d2932ee7d447de8a55c176029f70437e430b40310de9"
+    },
+    {
+      "path": "tools/layout/articles/downloads.mjs",
+      "bytes": 3686,
+      "sha256": "bbe44c115c08233e0a87c03c5277ca3ca8a727124e8a924c42b14d214a62eaa5"
+    },
+    {
+      "path": "tools/layout/articles/index.html",
+      "bytes": 6276,
+      "sha256": "c6dc048d6767b92394734931bb8ed6b0b81c920c5dbc6118a17590a34cc81e9e"
+    },
+    {
+      "path": "tools/layout/articles/model.mjs",
+      "bytes": 8789,
+      "sha256": "766e243610edccf77f7bd3501f20f1fdd60e7516fff8316b4ee8aa6d75496fa1"
+    },
+    {
+      "path": "tools/layout/articles/styles.css",
+      "bytes": 4412,
+      "sha256": "4debae8e84db22c041c8a185a222a0eefd04e113d9d6bbfdaa18a99b53635d15"
+    },
+    {
+      "path": "tools/layout/editors/moments/app.mjs",
+      "bytes": 20741,
+      "sha256": "f261d2c09fa1885d45640f662a850c57c089e76afdcbd9963121966891b33e2b"
+    },
+    {
+      "path": "tools/layout/editors/moments/assets/mist-sage-v2.png",
+      "bytes": 2986077,
+      "sha256": "07b1c24fc2eeebeb7db99cac5bd8df6d9ffef88e97ca2d8b62a39740bc83e99d"
+    },
+    {
+      "path": "tools/layout/editors/moments/canvas.mjs",
+      "bytes": 14640,
+      "sha256": "8259efe5f261728f34aab3ffa40c8e1238c77467f5659e34af0ac1ed1fd9b146"
+    },
+    {
+      "path": "tools/layout/editors/moments/downloads.mjs",
+      "bytes": 3687,
+      "sha256": "8cf3f5ee25ae527d4a9b837aec9cf11a83973e3ac6327dab4426d8628aaf07a3"
+    },
+    {
+      "path": "tools/layout/editors/moments/index.html",
+      "bytes": 7251,
+      "sha256": "26a33b142e77a7a0e6c43f4c0b9265cea295d973be521b6ae9db83656d3ff8ee"
+    },
+    {
+      "path": "tools/layout/editors/moments/model.mjs",
+      "bytes": 10170,
+      "sha256": "9a7d964e999a8ddd7f6e5982820544639528458e799ee3c530f2284fea4ccc10"
+    },
+    {
+      "path": "tools/layout/editors/moments/styles.css",
+      "bytes": 6450,
+      "sha256": "94aa74e1eed37d2c6e7f1c2058ce475adbd68a7423569d8d70d276fd0e17dc71"
+    },
+    {
+      "path": "tools/layout/index.html",
+      "bytes": 3074,
+      "sha256": "d52fa3ef068d89177ffe58c0866f4f4dfb2ab9743675b6f3f83a05e87d311a68"
+    },
+    {
+      "path": "tools/layout/studio-project.mjs",
+      "bytes": 2814,
+      "sha256": "208d28f72037427141096309116ece4393d6531fff30144f61a30b5024e70a2a"
+    },
+    {
+      "path": "tools/layout/studio.css",
+      "bytes": 4050,
+      "sha256": "8d1f07853390768548d77fab8199795e34d1d5445ce0f221bff349b9f9bce920"
+    },
+    {
+      "path": "tools/layout/studio.mjs",
+      "bytes": 12551,
+      "sha256": "34e7577c7ba3078ef57dc4a23b67e19626b705f4acb18d5b22ce682bfd3a9edd"
+    },
+    {
+      "path": "tools/layout/templates/xiaohongshu-social-card-b/core.mjs",
+      "bytes": 11896,
+      "sha256": "51e0bdb0b14f0538b2b5f0b8c0c491e6a35f6594f9808abd094299c414f69798"
+    },
+    {
+      "path": "tools/poster/index.html",
+      "bytes": 10006,
+      "sha256": "1a48576b54159f11df77177ec25ca2fc7ea830e6c8a1df588ad0a4a96e2ee190"
+    }
+  ]
+}

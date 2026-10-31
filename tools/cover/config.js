@@ -22,6 +22,8 @@ window.STUDIO_PRESETS = {
     {id:'risk', name:'寻璞 · 风险故事', art:'risk', style:'legacy', brand:'xunpu', title:'风险如何\n一步步发生', english:'Risk Stories', column:'风险故事'}
   ],
   poster:[
+    {id:'D1', name:'D1 · 上图下题', art:'sage', style:'d1', format:'3:5', title:'让日常\n多一点留白', subtitle:'', column:'排版样例'},
+    {id:'D2', name:'D2 · 全幅影像', art:'coast', style:'d2', format:'3:5', title:'把眼前的风景\n慢慢收进日常', subtitle:'记录，也给新的发现留一点余地。', column:''},
     {id:'paper-note', name:'纸张札记', art:'ivory', style:'paper', title:'把日常\n写成故事', subtitle:'留一些时间，给值得记住的事。', column:'生活随记'},
     {id:'oil-note', name:'油画随记', art:'blue', style:'full', title:'让生活\n慢慢展开', subtitle:'记录发生过的事，也留住当时的心情。', column:''},
     {id:'image-frame', name:'标准图框', art:'sage', style:'frame', title:'看见风景\n也看见自己', subtitle:'在路上，给自己一点时间。', column:'旅途笔记'},
@@ -34,5 +36,5 @@ window.ASSETS = {
   cn:'../cover/fonts/SourceHanSerifCN-SemiBold.woff2',
   en:'../cover/fonts/SourceSerif4-Regular.woff2',
   logo:'../cover/assets/xunpu-mother-symbol.svg',
-  ...Object.fromEntries(window.ART_LIBRARY.map(art=>[art.id,(art.shared?'../../assets/':'../cover/assets/')+art.file]))
+  ...Object.fromEntries(window.ART_LIBRARY.map(art=>[art.id,'../cover/assets/'+art.file]))
 };

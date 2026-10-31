@@ -7,7 +7,16 @@ const makeCanvas=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.he
 const layout=(x,y,size,width=700,lineHeight=1.2)=>({x,y,size,width,lineHeight,align:'left'});
 const createState=(art='ivory',sample=false,presetId)=>model.createState(profile,library,presets,art,sample,presetId);
 const dimensionsFor=s=>model.dimensionsFor(profile,s);
-let state=createState('ivory',true), mode='wide', selectedId='title', hitboxes=[], drag=null, stateLoadVersion=0;
+let state=createState(presets[0].art,true,presets[0].id), mode='wide', selectedId='title', hitboxes=[], drag=null, stateLoadVersion=0;
+let editorBusy=false, editorReady=false, savedSignature='', pendingEdit=null, pendingFailure='';
+const projectSnapshot=()=>validateState({...clone(state),activeMode:mode});
+function announceState(){window.dispatchEvent(new Event('layout-editor-state'));}
+function setBusy(value){
+ const next=Boolean(value);if(next&&!editorBusy){stateLoadVersion++;drag=null;}
+ editorBusy=next;$('editorApp').inert=editorBusy||!editorReady;document.body.dataset.busy=String(editorBusy);
+ $('preview').setAttribute('aria-disabled',String(editorBusy));announceState();
+}
+function markSaved(project){if(JSON.stringify(validateState(project))===JSON.stringify(projectSnapshot()))savedSignature=JSON.stringify(projectSnapshot());announceState();}
 const imageLoads=new Map();
 async function ensureArt(art){
  if(images[art])return images[art];
@@ -47,12 +56,18 @@ async function restoreDraft(){
 }
 
 const current=()=>state.elements.find(e=>e.id===selectedId);
-function fontOf(e,size){return e.font==='cn'?`600 ${size}px CoverCN, CoverEN, serif`:e.font==='en'?`400 ${size}px CoverEN, CoverCN, serif`:`500 ${size}px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif`;}
+function fontOf(e,size,s){return e.font==='article'?`500 ${size}px "Songti SC", "STSong", "SimSun", serif`:e.font==='cn'?`600 ${size}px CoverCN, CoverEN, serif`:e.font==='en'?`400 ${size}px CoverEN, CoverCN, serif`:`${s.style==='d2'?(e.id==='title'?600:400):500} ${size}px -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif`;}
 function fitImage(ctx,img,x,y,w,h,view){const scale=Math.max(w/img.width,h/img.height)*view.zoom,sw=w/scale,sh=h/scale;ctx.drawImage(img,(img.width-sw)*view.focusX,(img.height-sh)*view.focusY,sw,sh,x,y,w,h);}
 function background(ctx,s,aspect){
  const [w,h]=dimensionsFor(s)[aspect],img=images[s.art],view=s.background[aspect];ctx.fillStyle=s.paper;ctx.fillRect(0,0,w,h);
  if(!img)return;
- if(aspect==='square'&&view.mode==='editorial'){
+ const original=model.coverGeometry(s,aspect);
+ if(original){
+  const r=original.photo;fitImage(ctx,img,r.x,r.y,r.width,r.height,view);
+  if(s.style==='d2'){
+   const g=ctx.createLinearGradient(0,0,0,original.shadowHeight);g.addColorStop(0,'rgba(5,16,27,.97)');g.addColorStop(.48,'rgba(11,28,43,.84)');g.addColorStop(1,'rgba(18,42,60,0)');ctx.fillStyle=g;ctx.fillRect(0,0,w,original.shadowHeight);
+  }
+ }else if(aspect==='square'&&view.mode==='editorial'){
   fitImage(ctx,img,0,h*.4375,w,h*.5625,view);
   const fade=ctx.createLinearGradient(0,h*.4375,0,h*.519);fade.addColorStop(0,s.paper);fade.addColorStop(1,s.paper+'00');ctx.fillStyle=fade;ctx.fillRect(0,h*.4375,w,h*.082);
  }else if(s.style==='frame'){
@@ -96,7 +111,8 @@ function alignedLogoBottom(s,aspect){const e=s.elements.find(item=>item.type==='
 let measurementContext;
 function textGeometry(s,e,aspect,ctx){
  if(!ctx)ctx=measurementContext||(measurementContext=makeCanvas(1,1).getContext('2d'));
- const l=e.layout[aspect];ctx.font=fontOf(e,l.size);ctx.textBaseline='top';ctx.textAlign=l.align;
+ const l=e.layout[aspect];ctx.font=fontOf(e,l.size,s);ctx.textBaseline='top';ctx.textAlign=l.align;
+ ctx.letterSpacing=['d1','d2'].includes(s.style)?'1px':'0px';
  const lines=wrapText(ctx,e.text,l.width),x=l.x+(l.align==='center'?l.width/2:l.align==='right'?l.width:0);let left=Infinity,right=-Infinity,top=Infinity,bottom=-Infinity;
  lines.forEach((line,i)=>{if(!line.trim())return;const m=ctx.measureText(line),offset=i*l.size*l.lineHeight;left=Math.min(left,x-m.actualBoundingBoxLeft);right=Math.max(right,x+m.actualBoundingBoxRight);top=Math.min(top,offset-m.actualBoundingBoxAscent);bottom=Math.max(bottom,offset+m.actualBoundingBoxDescent);});
  if(!Number.isFinite(top)){left=l.x;right=l.x;top=0;bottom=0;}
@@ -119,7 +135,7 @@ function draw(s,aspect,{backgroundOnly=false,selection=false,target=null}={}){
   const l=e.layout[aspect];ctx.save();ctx.globalAlpha=e.opacity;let b;
   if(e.type==='text'){
    if(!e.text.trim()){ctx.restore();continue;}
-   const geometry=textGeometry(s,e,aspect,ctx);ctx.fillStyle=e.color;
+   const geometry=textGeometry(s,e,aspect,ctx);ctx.fillStyle=e.color;if(s.style==='d2'){ctx.shadowColor='rgba(0,0,0,.42)';ctx.shadowBlur=18;ctx.shadowOffsetY=3;}
    geometry.lines.forEach((line,i)=>ctx.fillText(line,geometry.x,geometry.y+i*l.size*l.lineHeight));b=geometry.box;
   }else if(e.type==='logo'){
    const geometry=logoGeometry(s,e,aspect);ctx.drawImage(geometry.img,l.x,l.y,l.size,geometry.height);b=geometry.box||{x:l.x,y:l.y,width:0,height:0};
@@ -133,7 +149,7 @@ function draw(s,aspect,{backgroundOnly=false,selection=false,target=null}={}){
 function redraw(){
  const result=draw(state,mode,{target:$('preview'),selection:true});hitboxes=result.boxes;$('warnings').textContent=[...new Set(result.warnings)].join('\n');
  $('preview').dataset.mode=mode;$('canvasShell').classList.toggle('square',mode==='square');$('dimensions').textContent=dimensionsFor(state)[mode].join(' × ');
- for(const [id,value]of [['modeWide','wide'],['modeSquare','square']]){$(id).classList.toggle('active',mode===value);$(id).setAttribute('aria-pressed',String(mode===value));}scheduleDraft();
+ for(const [id,value]of [['modeWide','wide'],['modeSquare','square']]){$(id).classList.toggle('active',mode===value);$(id).setAttribute('aria-pressed',String(mode===value));}scheduleDraft();announceState();
 }
 function status(message){$('status').textContent=message;}
 function renderLayers(){
@@ -185,14 +201,52 @@ function validDataImage(value){return typeof value==='string'&&/^data:image\/(pn
 function validateState(input){
  return model.validateState(input,profile,library);
 }
-async function loadState(value){const next=validateState(value),loaded={},version=++stateLoadVersion;if(next.art!=='custom')await ensureArt(next.art);if(next.customBackground)loaded.custom=await loadImage(next.customBackground);if(next.customLogo)loaded.customLogo=await loadImage(next.customLogo);if(version!==stateLoadVersion)return false;delete images.custom;delete images.customLogo;Object.assign(images,loaded);state=next;selectedId=state.elements.find(e=>e.id==='title')?.id||state.elements[0]?.id||null;if(state.material)restoreMaterialControls(state.material);$('templateSelect').value=presets.find(p=>p.id===state.templateId)?.id||presets.find(p=>p.art===state.art)?.id||'blank';refresh();status('方案已载入，文字、位置和图片均已恢复。');return true;}
+async function loadState(value){const next=validateState(value),loaded={},version=++stateLoadVersion;if(next.art!=='custom')await ensureArt(next.art);if(next.customBackground)loaded.custom=await loadImage(next.customBackground);if(next.customLogo)loaded.customLogo=await loadImage(next.customLogo);if(version!==stateLoadVersion)return false;const nextMode=next.activeMode||mode;delete next.activeMode;delete images.custom;delete images.customLogo;Object.assign(images,loaded);state=next;mode=nextMode;selectedId=state.elements.find(e=>e.id==='title')?.id||state.elements[0]?.id||null;if(state.material)restoreMaterialControls(state.material);$('templateSelect').value=presets.find(p=>p.id===state.templateId)?.id||presets.find(p=>p.art===state.art)?.id||'blank';refresh();status('方案已载入，文字、位置和图片均已恢复。');return true;}
+async function frozen(action){const previous=editorBusy;if(!previous)setBusy(true);try{return await action();}finally{if(!previous)setBusy(false);}}
+async function mutate(action){
+ if(editorBusy)return;
+ pendingFailure='';const operation=frozen(action);pendingEdit=operation;announceState();
+ try{return await operation;}catch(e){pendingFailure=e.message;status(e.message);return false;}finally{if(pendingEdit===operation)pendingEdit=null;announceState();}
+}
+async function prepareSnapshot(snapshot){
+ await document.fonts.ready;
+ if(snapshot.art!=='custom')await ensureArt(snapshot.art);
+ else if(!images.custom)images.custom=await loadImage(snapshot.customBackground);
+ if(snapshot.customLogo&&!images.customLogo)images.customLogo=await loadImage(snapshot.customLogo);
+}
+function canvasBlob(canvas,type='image/png'){return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('图片无法生成，请重试。')),type,.94));}
+function safeTitle(){return(state.elements.find(e=>e.id==='title'&&e.type==='text')?.text||'排版封面').replace(/[\x00-\x1f<>:"/\\|?*]/g,' ').trim().slice(0,60)||'排版封面';}
+function editorStatus(){
+ let errors=[];
+ try{validateState(state);errors=draw(state,mode).warnings;if(!images[state.art])errors.push('底图尚未就绪。');}catch(e){errors=[e.message];}
+ if(pendingEdit)errors.push('正在处理素材，请稍候。');
+ if(pendingFailure)errors.push(pendingFailure);
+ return{ok:errors.length===0,errors:[...new Set(errors)],hasChanges:JSON.stringify(projectSnapshot())!==savedSignature,busy:editorBusy};
+}
+async function exportProjectImages(){return frozen(async()=>{
+ const snapshot=projectSnapshot(),signature=JSON.stringify(snapshot);await prepareSnapshot(snapshot);
+ if(signature!==JSON.stringify(projectSnapshot()))throw new Error('内容已变化，请重新导出。');
+ const result=draw(snapshot,snapshot.activeMode);if(result.warnings.length)throw new Error(result.warnings.join(' '));
+ const blob=await canvasBlob(result.canvas);if(signature!==JSON.stringify(projectSnapshot()))throw new Error('内容已变化，请重新导出。');
+ return[{name:safeTitle()+'-'+dimensionsFor(snapshot)[snapshot.activeMode].join('x')+'.png',blob}];
+ });}
+async function previewProject(){return frozen(async()=>{const snapshot=projectSnapshot();await prepareSnapshot(snapshot);return canvasBlob(draw(snapshot,snapshot.activeMode).canvas);});}
+async function loadProject(project){return frozen(async()=>{if(!await loadState(project))throw new Error('载入已取消，原稿保留。');pendingFailure='';savedSignature=JSON.stringify(projectSnapshot());announceState();});}
+async function exportStandalone(suffix,{backgroundOnly=false,upload=false}={}){
+ try{await frozen(async()=>{
+  const snapshot=projectSnapshot();await prepareSnapshot(snapshot);let canvas;
+  if(upload){const warnings=['wide','square'].flatMap(aspect=>draw(snapshot,aspect).warnings);if(warnings.length)throw new Error(warnings.join(' '));canvas=uploadSheet(snapshot);}
+  else{const result=draw(snapshot,mode,{backgroundOnly});if(result.warnings.length)throw new Error(result.warnings.join(' '));canvas=result.canvas;}
+  await downloadCanvas(canvas,suffix);
+ });}catch(e){status(e.message);}
+}
 async function uploadImage(input,type){
  const file=input.files[0];if(!file)return;const version=++stateLoadVersion;
  try{if(file.size>20*1024*1024)throw new Error('请选择20MB以内的图片。');const data=await fileData(file);if(!validDataImage(data))throw new Error('请选择 PNG、JPG 或 WebP 图片。');const img=await loadImage(data);
  if(version!==stateLoadVersion)return;
  if(type==='background'){images.custom=img;state.customBackground=data;state.art='custom';state.customLabel='上传图片';state.material=null;}else{images.customLogo=img;state.customLogo=data;let logo=state.elements.find(e=>e.type==='logo');if(!logo){logo=createState().elements.find(e=>e.id==='logo');state.elements.push(logo);}logo.enabled=true;selectedId=logo.id;}
  refresh();status('图片已替换；保存方案会一起保存图片。');
- }catch(e){status(e.message);}finally{input.value='';}
+ }catch(e){status(e.message);throw e;}finally{input.value='';}
 }
 async function selectArt(art){
  const version=++stateLoadVersion;
@@ -200,14 +254,14 @@ async function selectArt(art){
   if(version!==stateLoadVersion)return;state.art=art;
   for(const aspect of ['wide','square'])Object.assign(state.background[aspect],{focusX:.5,focusY:.65,zoom:1});
   refresh();status('底图已更换，现有文字与排版保留。');
- }catch(e){status(e.message);renderBackgroundControls();}
+ }catch(e){status(e.message);renderBackgroundControls();throw e;}
 }
 function renderArtGallery(){
  const group=$('artCategory').value,root=$('artGallery');root.replaceChildren();
  for(const art of library.filter(art=>group==='all'||art.group===group)){
   const button=document.createElement('button');button.type='button';button.className='art-tile';button.dataset.art=art.id;button.setAttribute('aria-label','使用底图：'+art.name);button.setAttribute('aria-pressed',String(state.art===art.id));
   const img=document.createElement('img');img.src=assets[art.id];img.alt='';img.loading='lazy';img.width=160;img.height=90;
-  const label=document.createElement('span');label.textContent=art.name;button.append(img,label);button.onclick=()=>void selectArt(art.id);root.append(button);
+  const label=document.createElement('span');label.textContent=art.name;button.append(img,label);button.onclick=()=>void mutate(()=>selectArt(art.id));root.append(button);
  }
 }
 let materialSeed=42;
@@ -219,10 +273,10 @@ async function applyMaterial(){
  try{
   const recipe=materialOptions(),[w,h]=dimensionsFor(state).wide,c=makeCanvas(w,h);window.CoverTextures.render(c,recipe);
   const data=c.toDataURL('image/png'),image=await loadImage(data);if(version!==stateLoadVersion)return;
-  images.custom=image;state.customBackground=data;state.art='custom';state.material=recipe;state.customLabel={paper:'自选纸张',canvas:'自选画布',wash:'自选淡彩',cutpaper:'自选拼纸'}[recipe.style];state.paper=recipe.base;state.style='full';
+  images.custom=image;state.customBackground=data;state.art='custom';state.material=recipe;state.customLabel={paper:'自选纸张',canvas:'自选画布',wash:'自选淡彩',cutpaper:'自选拼纸'}[recipe.style];state.paper=recipe.base;if(!['d1','d2'].includes(state.style))state.style='full';
   for(const aspect of ['wide','square'])Object.assign(state.background[aspect],{focusX:.5,focusY:.5,zoom:1});state.background.square.mode='cover';
   refresh();status('底图已生成，现有文字保留。保存方案可一并保留颜色与材质。');
- }catch(e){status('未生成：'+e.message);}finally{button.disabled=false;}
+ }catch(e){status('未生成：'+e.message);throw e;}finally{button.disabled=false;}
 }
 function configureStudio(){
  const template=$('templateSelect'),blank=document.createElement('option');blank.value='blank';blank.textContent='纯底图 · 自由排版';template.append(blank);
@@ -252,14 +306,14 @@ function installEvents(){
   $('quick-'+id).oninput=()=>{const e=quickLayer(id);if(!e)return;e.text=$('quick-'+id).value;e.enabled=Boolean(e.text.trim());selectedId=e.id;renderLayers();renderProperties();renderQuickFields();redraw();};
   $('quick-'+id+'-enabled').onchange=()=>{const e=quickLayer(id);if(!e)return;e.enabled=$('quick-'+id+'-enabled').checked;refresh();};
  }
- $('applyTemplate').onclick=async()=>{const key=$('templateSelect').value,preset=presets.find(p=>p.id===key);status('正在套用模板…');try{await loadState(createState(preset?.art||'ivory',key!=='blank',preset?.id));status('模板已套用，直接修改上方标题即可。');}catch(e){status('模板未载入：'+e.message);}};
+ $('applyTemplate').onclick=async()=>{if(editorStatus().hasChanges&&!window.confirm('套用模板会替换当前文字和排版，是否继续？'))return;const key=$('templateSelect').value,preset=presets.find(p=>p.id===key);status('正在套用模板…');try{if(await mutate(()=>loadState(createState(preset?.art||'ivory',key!=='blank',preset?.id))))status('模板已套用，直接修改上方标题即可。');}catch(e){status('模板未载入：'+e.message);}};
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&draftTimer)void flushDraft();});
  window.addEventListener('pagehide',()=>{if(draftTimer)void flushDraft();});
  $('modeWide').onclick=()=>setMode('wide');$('modeSquare').onclick=()=>setMode('square');
- $('artSelect').onchange=()=>void selectArt($('artSelect').value);$('artCategory').onchange=renderArtGallery;
+ $('artSelect').onchange=()=>void mutate(()=>selectArt($('artSelect').value));$('artCategory').onchange=renderArtGallery;
  $('posterFormat').onchange=()=>{model.changeFormat(state,$('posterFormat').value);refresh();status('竖版画幅已更换，方版排版保留。');};
  for(const id of ['materialStyle','materialBase','materialAccent','materialIntensity'])$(id).oninput=previewMaterial;
- $('shuffleMaterial').onclick=()=>{materialSeed=(Math.imul(materialSeed,1664525)+1013904223)>>>0||1;previewMaterial();};$('applyMaterial').onclick=applyMaterial;
+ $('shuffleMaterial').onclick=()=>{materialSeed=(Math.imul(materialSeed,1664525)+1013904223)>>>0||1;previewMaterial();};$('applyMaterial').onclick=()=>void mutate(applyMaterial);
  $('hideAll').onclick=()=>{state.elements.forEach(e=>e.enabled=false);refresh();status('所有文字、标志和短线已隐藏。');};
  $('showAll').onclick=()=>{model.showFilled(state);refresh();};
  $('showSample').onclick=()=>{const art=state.art==='custom'?'ivory':state.art;const fresh=createState(art,true);for(const key of ['art','customBackground','customLogo','customLabel','material','background','paper','format'])fresh[key]=clone(state[key]??null);fresh.style=state.style;state=fresh;selectedId='title';refresh();status('已套用排版示例；所有内容都可修改或关闭。');};
@@ -277,22 +331,22 @@ function installEvents(){
  $('moveUp').onclick=()=>reorder(1);$('moveDown').onclick=()=>reorder(-1);
  $('paperColor').oninput=()=>{state.paper=$('paperColor').value;renderColorSwatches();redraw();};$('squareBgMode').onchange=()=>{state.background.square.mode=$('squareBgMode').value;redraw();};
  for(const [id,key,scale]of [['focusX','focusX',100],['focusY','focusY',100],['bgZoom','zoom',100]])$(id).oninput=()=>{state.background[mode][key]=Number($(id).value)/scale;redraw();};
- $('backgroundFile').onchange=()=>uploadImage($('backgroundFile'),'background');$('logoFile').onchange=()=>uploadImage($('logoFile'),'logo');
- $('downloadCurrent').onclick=()=>downloadCanvas(draw(state,mode).canvas,(mode==='square'?'方版':profile==='poster'?'竖版':'横版')+'-'+dimensionsFor(state)[mode].join('x'));
- $('downloadBackground').onclick=()=>downloadCanvas(draw(state,mode,{backgroundOnly:true}).canvas,'纯底图-'+dimensionsFor(state)[mode].join('x'));
- $('downloadUpload').onclick=()=>downloadCanvas(uploadSheet(state),'双裁切母图-1880x1600');
- $('saveDesign').onclick=()=>{exportGeneration++;showExport(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),filename('方案.json'));};
- $('loadDesign').onchange=async()=>{const input=$('loadDesign'),file=input.files[0];if(!file)return;try{if(file.size>60*1024*1024)throw new Error('方案文件超过60MB，请检查是否选错文件。');await loadState(JSON.parse(await file.text()));}catch(e){status('未载入：'+e.message);}finally{input.value='';}};
+ $('backgroundFile').onchange=()=>void mutate(()=>uploadImage($('backgroundFile'),'background'));$('logoFile').onchange=()=>void mutate(()=>uploadImage($('logoFile'),'logo'));
+ $('downloadCurrent').onclick=()=>exportStandalone((mode==='square'?'方版':profile==='poster'?'竖版':'横版')+'-'+dimensionsFor(state)[mode].join('x'));
+ $('downloadBackground').onclick=()=>exportStandalone('纯底图-'+dimensionsFor(state)[mode].join('x'),{backgroundOnly:true});
+ $('downloadUpload').onclick=()=>exportStandalone('双裁切母图-1880x1600',{upload:true});
+ $('saveDesign').onclick=()=>{exportGeneration++;showExport(new Blob([JSON.stringify(projectSnapshot(),null,2)],{type:'application/json'}),filename('方案.json'));};
+ $('loadDesign').onchange=async()=>{const input=$('loadDesign'),file=input.files[0];if(!file)return;try{if(file.size>60*1024*1024)throw new Error('方案文件超过60MB，请检查是否选错文件。');const next=validateState(JSON.parse(await file.text()));if(editorStatus().hasChanges&&!window.confirm('载入会替换当前未保存的修改，是否继续？'))return;await loadProject(next);}catch(e){status('未载入：'+e.message);}finally{input.value='';}};
  const canvas=$('preview');const point=e=>{const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height};};
- canvas.onpointerdown=e=>{const p=point(e),hit=[...hitboxes].reverse().find(b=>p.x>=b.x-8&&p.x<=b.x+b.width+8&&p.y>=b.y-8&&p.y<=b.y+b.height+8);if(!hit){selectedId=null;refresh();return;}selectedId=hit.id;const element=current(),l=element.layout[mode];drag={pointer:e.pointerId,start:p,x:l.x,y:element.type==='text'?textGeometry(state,element,mode).y:l.y};canvas.setPointerCapture(e.pointerId);refresh();};
- canvas.onpointermove=e=>{if(!drag)return;const p=point(e),element=current(),l=element?.layout[mode];if(!l||p.x===drag.start.x&&p.y===drag.start.y)return;setBrandAlignment(element,mode,false);l.x=Math.max(-4000,Math.min(4000,Math.round(drag.x+p.x-drag.start.x)));l.y=Math.max(-4000,Math.min(4000,Math.round(drag.y+p.y-drag.start.y)));renderProperties();redraw();};
+ canvas.onpointerdown=e=>{if(editorBusy)return;const p=point(e),hit=[...hitboxes].reverse().find(b=>p.x>=b.x-8&&p.x<=b.x+b.width+8&&p.y>=b.y-8&&p.y<=b.y+b.height+8);if(!hit){selectedId=null;refresh();return;}selectedId=hit.id;const element=current(),l=element.layout[mode];drag={pointer:e.pointerId,start:p,x:l.x,y:element.type==='text'?textGeometry(state,element,mode).y:l.y};canvas.setPointerCapture(e.pointerId);refresh();};
+ canvas.onpointermove=e=>{if(editorBusy||!drag)return;const p=point(e),element=current(),l=element?.layout[mode];if(!l||p.x===drag.start.x&&p.y===drag.start.y)return;setBrandAlignment(element,mode,false);l.x=Math.max(-4000,Math.min(4000,Math.round(drag.x+p.x-drag.start.x)));l.y=Math.max(-4000,Math.min(4000,Math.round(drag.y+p.y-drag.start.y)));renderProperties();redraw();};
  const endDrag=e=>{if(drag&&canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);drag=null;};canvas.onpointerup=endDrag;canvas.onpointercancel=endDrag;
 }
 window.coverReady=(async()=>{
  configureStudio();
  const cn=new FontFace('CoverCN',`url(${assets.cn})`,{weight:'600'}),en=new FontFace('CoverEN',`url(${assets.en})`,{weight:'400'});
  await Promise.all([cn.load(),en.load()]);document.fonts.add(cn);document.fonts.add(en);
- await Promise.all(['logo','ivory'].map(ensureArt));
- refresh();const restored=await restoreDraft();installEvents();$('editorApp').inert=false;status(restored?'已恢复上次方案，可以继续编辑。':'选择模板，或直接输入标题；所有文字都可以单独隐藏。');
- window.coverAPI={createState,draw,uploadSheet,makeCanvas,loadState,validateState,getState:()=>clone(state),setMode,selectElement:id=>{selectedId=id;refresh();},getMode:()=>mode,flushDraft};return true;
+ await Promise.all([...new Set(['logo','ivory',state.art])].map(ensureArt));
+ refresh();const restored=await restoreDraft();installEvents();editorReady=true;savedSignature=JSON.stringify(projectSnapshot());setBusy(false);status(restored?'已恢复上次方案，可以继续编辑。':'选择模板，或直接输入标题；所有文字都可以单独隐藏。');
+ window.coverAPI={createState,draw,uploadSheet,makeCanvas,loadState,validateState,getState:()=>clone(state),setMode,selectElement:id=>{selectedId=id;refresh();},getMode:()=>mode,flushDraft,projectSnapshot,loadProject,exportProjectImages,previewProject,editorStatus,setBusy,markSaved,flush:async()=>{if(pendingEdit)await pendingEdit;if(pendingFailure)throw new Error(pendingFailure);if(draftEnabled&&!await flushDraft())throw new Error('本机暂存失败，请先保存工程。');}};return true;
 })().catch(e=>{draftEnabled=false;draftMessage('未改动本机旧草稿。');status('加载失败：'+e.message+' 请刷新重试。');throw e;});
