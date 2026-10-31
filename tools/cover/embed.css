@@ -1,0 +1,48 @@
+/* A single input column, with the clean image on the other side. */
+:root{--tool-ink:#2e443d;--tool-accent:#4c6d60;--tool-hover:#36584b;--tool-line:#c8d0c4;--tool-wash:#e5ebdf;--tool-muted:#738276}
+.paper-editor{background-color:#f5f4ed;color:var(--tool-ink)}
+.paper-editor header{background-color:#f4f4e9;border-color:#a5b8a8;border-top-width:3px}
+.paper-editor h1,.paper-editor h2{color:#37574b}
+.paper-editor .workspace{grid-template-columns:minmax(290px,.85fr) minmax(0,1.15fr);max-width:1260px;gap:26px;align-items:start}
+.paper-editor .sidebar{grid-column:1;grid-row:1;min-width:0}
+.paper-editor .stage{grid-column:2;grid-row:1;min-width:0;position:sticky;top:12px}
+.paper-editor .quick-editor,.paper-editor .panel{background-color:#fbfaf3;border-color:var(--tool-line);box-shadow:0 2px 0 -1px #dde4d5}
+.paper-editor .quick-editor{border-top-color:#9aad97}
+.paper-editor .quick-grid{grid-template-columns:1fr;gap:13px}
+.paper-editor .quick-title{grid-column:auto}
+.paper-editor .quick-editor .actions{gap:6px}
+.paper-editor .quick-editor .actions select{flex:1;width:100%;min-width:140px}
+.paper-editor .quick-editor .actions button{font-size:12px}
+.paper-editor .quick-heading label,.paper-editor .field>span{color:#708074}
+.paper-editor input,.paper-editor select,.paper-editor textarea{background-color:#fffef9;border-color:#cbd5c7;color:#30483e}
+.paper-editor button,.paper-editor .file-button{background-color:#fffdf5;color:#405a4d;border-color:var(--tool-line)}
+.paper-editor button:hover,.paper-editor .file-button:hover{background-color:#edf0e5;border-color:var(--tool-accent)}
+.paper-editor button.active,.paper-editor .primary{background-color:var(--tool-accent);color:#fffef9;border-color:var(--tool-accent)}
+.paper-editor .canvas-shell{background-color:#e8ecdf;border-color:#c8d3c2;padding:18px}
+.paper-editor .toolbar{margin:10px 0 18px;gap:11px}
+.paper-editor .toolbar .actions{width:100%}
+.paper-editor .toolbar .art-select{width:100%;max-width:none;flex:1}
+.paper-editor .bg-controls{grid-template-columns:1fr;gap:0}
+.paper-editor .art-gallery{max-height:180px}
+.paper-editor #propertyPanel summary h2{display:inline;font-size:16px}
+.paper-editor #propertyPanel summary{padding:0}
+.paper-editor .layer.selected button{background:var(--tool-wash);color:var(--tool-accent);border-color:var(--tool-line)}
+.paper-editor .layer.off button,.paper-editor .layer small{color:#7d887c}
+.paper-editor #status{color:#486a58}
+.paper-editor .danger,.paper-editor #warnings,.paper-editor #status.error{color:#994a32}
+.is-embedded .paper-editor{margin:0;min-height:0;background:transparent}
+.is-embedded .paper-editor header,.is-embedded .exportbar,.is-embedded #exportDialog{display:none}
+.is-embedded .paper-editor .workspace{padding:0;gap:24px;max-width:1180px}
+.is-embedded .paper-editor canvas[data-mode]{width:100%;height:auto;max-width:100%;max-height:none}
+.is-embedded .paper-editor .canvas-shell{min-height:0}
+.is-embedded .paper-editor .stage{position:static}
+.is-embedded .paper-editor #editorApp[inert]{opacity:.7}
+@media(max-width:760px){
+ .paper-editor .workspace{display:flex;flex-direction:column;padding:14px;gap:22px}
+ .paper-editor .sidebar{display:block;width:100%;order:0}
+ .paper-editor .stage{width:100%;order:1;position:static}
+ .paper-editor .sidebar .panel{margin-bottom:14px}
+ .paper-editor .canvas-shell{padding:12px}
+ .paper-editor canvas[data-mode]{width:100%;height:auto;max-height:none}
+ .paper-editor .editor-profiles{gap:18px}
+}

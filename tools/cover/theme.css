@@ -1,0 +1,36 @@
+/* The ochre project identity belongs to the editor chrome, never the exported canvas. */
+:root{--tool-ink:#49412f;--tool-accent:#87611f;--tool-hover:#6e4e17;--tool-line:#cec1a0;--tool-wash:#eee1bf;--tool-muted:#82775f;--tool-serif:"Songti SC","STSong","SimSun",serif}
+.paper-editor{color:var(--tool-ink);background:#f3efdf url('./assets/paper-grain.svg');font-size:14px}
+.paper-editor header{background:#f7efdc url('./assets/paper-grain.svg');border-bottom:1px solid #c7b78e;border-top:6px solid #ba9349;padding-top:19px;padding-bottom:20px}
+.paper-editor .editor-heading{display:flex;flex-direction:column;gap:9px}
+.paper-editor .editor-back{font-size:12px;color:var(--tool-muted);text-decoration:none}
+.paper-editor .editor-back:hover{color:var(--tool-accent);text-decoration:underline;text-underline-offset:4px}
+.paper-editor h1{font:600 29px/1.5 var(--tool-serif);letter-spacing:1px;color:#60502e}
+.paper-editor h2{font:600 19px/1.5 var(--tool-serif);color:#69532c}
+.paper-editor button,.paper-editor .file-button{background:#fffaf0;color:#5c5139;border-color:var(--tool-line);border-radius:3px;box-shadow:0 1px 0 #bfb08a20}
+.paper-editor button:hover,.paper-editor .file-button:hover{border-color:var(--tool-accent);background:#f4ead2}
+.paper-editor button.active,.paper-editor .primary{background:var(--tool-accent);color:#fffdf4;border-color:var(--tool-accent)}
+.paper-editor button.active:hover,.paper-editor .primary:hover{background:var(--tool-hover)}
+.paper-editor input,.paper-editor select,.paper-editor textarea{border-color:#d2c7ac;border-radius:3px;background:#fffdf7;color:#494331}
+.paper-editor input[type=checkbox]{accent-color:var(--tool-accent)}
+.paper-editor button:focus-visible,.paper-editor input:focus-visible,.paper-editor select:focus-visible,.paper-editor textarea:focus-visible,.paper-editor a:focus-visible{outline:2px solid var(--tool-accent);outline-offset:3px}
+.paper-editor .workspace{gap:25px;padding-top:26px}
+.paper-editor .quick-editor,.paper-editor .panel{background:#fbf6e9 url('./assets/paper-grain.svg');border-color:var(--tool-line);border-radius:4px;box-shadow:0 3px 0 -1px #e6ddc7,0 5px 12px #55442908}
+.paper-editor .quick-editor{border-top:3px solid #c3a060;padding:19px}
+.paper-editor .quick-heading label,.paper-editor .field>span{color:#82765b}
+.paper-editor .canvas-shell{background:#e8ddbf url('./assets/paper-grain.svg');border:1px solid #cebc8b;border-radius:4px;padding:26px;box-shadow:inset 0 1px 8px #6a57270a}
+.paper-editor canvas{box-shadow:1px 7px 17px #5c492921}
+.paper-editor .exportbar{margin-top:22px}
+.paper-editor .hint,.paper-editor #draftStatus,.paper-editor #exportDetails{color:var(--tool-muted)}
+.paper-editor #status{color:#8a692c}
+.paper-editor .layer.selected button{background:var(--tool-wash);color:#72531f;border-color:#d0bb87}
+.paper-editor .layer.off button,.paper-editor .layer small{color:#8d8570}
+.paper-editor .color-swatch{border-color:#bcb092;box-shadow:none}
+.paper-editor .color-swatch.chosen{outline-color:var(--tool-accent)}
+.paper-editor dialog{background:#fbf6e9 url('./assets/paper-grain.svg');color:var(--tool-ink);border-color:#c6b68f;border-radius:5px;box-shadow:0 20px 70px #56462c30}
+.paper-editor dialog::backdrop{background:#41382075}
+.paper-editor #exportLink{background:var(--tool-accent);border-color:var(--tool-accent);color:white;border-radius:3px}
+.paper-editor .danger,.paper-editor #warnings{color:#994a32}
+@media(max-width:1000px){.paper-editor .workspace{gap:16px;padding-top:20px}.paper-editor .quick-editor{padding:16px}.paper-editor .canvas-shell{padding:17px}}
+@media(max-width:760px){.paper-editor header{padding:16px 16px 18px}.paper-editor .editor-heading{gap:5px}.paper-editor h1{font-size:27px}.paper-editor .workspace{gap:18px;padding:16px}.paper-editor .canvas-shell{padding:12px}.paper-editor .quick-editor{padding:15px}.paper-editor .toolbar{gap:13px}}
+@media(max-width:500px){.paper-editor header{align-items:flex-start;flex-direction:column;gap:16px}.paper-editor header>.actions{gap:7px}.paper-editor header>.actions button,.paper-editor header>.actions .file-button{font-size:12px;padding:8px 10px}.paper-editor .workspace{padding:13px}.paper-editor .exportbar{gap:7px}.paper-editor .exportbar button{font-size:12px;padding:9px 10px}.paper-editor h2{font-size:18px}.paper-editor input,.paper-editor textarea,.paper-editor select{font-size:16px}.paper-editor .quick-heading label,.paper-editor .field>span{font-size:12px}.paper-editor .quick-editor select{width:min(100%,180px)}.paper-editor .color-swatch{min-width:26px;width:26px;height:26px}.paper-editor .quick-grid{gap:16px}.paper-editor .sidebar .panel{padding:16px}.paper-editor .layer button{min-height:40px}.paper-editor .art-select{width:152px}}
