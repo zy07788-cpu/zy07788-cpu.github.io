@@ -11,8 +11,8 @@
 
 - `index.html`：个人介绍、四个作品入口及联系方式。
 - `thesis.html`、`duck.html`、`drawer.html`：项目详情。
-- `tools/layout/index.html`：统一排版工作室入口，图文阅读、动态卡与封面三种用途。
-- `cover.html`：原封面介绍页继续保留。
+- `cover.html`：首页先到轻量介绍页，查看用途和封面示例，再进入排版。
+- `tools/layout/index.html`：统一排版编辑器，图文阅读、动态卡与封面三种用途。
 - `tools/cover/index.html`：公众号封面，横版1880×800、方版800×800。
 - `tools/poster/index.html`：图文首页图，竖版1440×1920或1440×2400、方版1080×1080。
 - `privacy.html`：隐私说明。
