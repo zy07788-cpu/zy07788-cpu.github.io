@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer"><meta name="color-scheme" content="light">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'">
+  <title>排版工作室</title><link rel="stylesheet" href="./studio.css?v=e584159048f79e2b">
+</head>
+<body>
+<main class="studio-shell">
+  <header class="studio-header"><div><a class="back" href="../../">← 返回</a><h1>排版工作室</h1></div><span class="local-note">在浏览器里编辑，保存到自己的文件</span></header>
+  <div class="studio-bar">
+    <nav class="studio-tabs" role="tablist" aria-label="排版用途">
+      <button id="tab-article" data-group="article" type="button" role="tab" aria-selected="true" aria-controls="editor-article">图文阅读</button>
+      <button id="tab-moments" data-group="moments" type="button" role="tab" aria-selected="false" aria-controls="editor-moments" tabindex="-1">动态卡</button>
+      <button id="tab-covers" data-group="covers" type="button" role="tab" aria-selected="false" aria-controls="editor-poster" tabindex="-1">封面</button>
+    </nav>
+    <div class="file-actions"><button id="studio-save" type="button" disabled>保存工程</button><button id="studio-load" type="button">载入工程</button><button id="studio-export" type="button" class="primary" disabled>导出图片</button><button id="studio-feedback" type="button" disabled>反馈</button></div>
+  </div>
+  <div id="cover-family" class="cover-family" hidden><label>封面用途<select id="cover-kind"><option value="poster">图文封面 · D</option><option value="cover">公众号 · 横版／方版</option></select></label></div>
+  <p id="studio-status" class="studio-status" role="status" aria-live="polite">正在打开编辑器…</p>
+  <div id="editor-host" aria-busy="true"></div>
+  <input id="studio-project-file" type="file" accept="application/json,.json" aria-label="载入排版工程" hidden>
+  <p class="save-note">工程可重新载入继续修改；浏览器暂存仅在本机。发布前查看实际导出的图片。</p>
+  <dialog id="feedback-dialog" aria-labelledby="feedback-title"><form method="dialog"><header><h2 id="feedback-title">交给AI继续调整</h2><button id="close-feedback" type="submit" aria-label="关闭反馈">关闭</button></header><label for="studio-feedback-notes">想调整什么</label><textarea id="studio-feedback-notes" rows="5" maxlength="5000" placeholder="例如：保留图片和正文，把标题上方留白再增加一点。"></textarea><p>工程、当前预览和修改说明会一起下载，不会自动发送。</p><button id="studio-feedback-download" type="button" class="primary">下载反馈包</button></form></dialog>
+</main><script type="module" src="./studio.mjs?v=e584159048f79e2b"></script>
+</body></html>
