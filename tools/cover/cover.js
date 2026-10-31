@@ -288,46 +288,6 @@ function configureStudio(){
  previewMaterial();
  if(profile==='poster'){$('downloadUpload').hidden=true;$('preview').setAttribute('aria-label','图文首页图画布，可拖动可见元素');}
 }
-async function selectArt(art){
- const version=++stateLoadVersion;
- try{if(art==='custom'){if(!images.custom)throw new Error('请先上传或生成一张底图。');}else await ensureArt(art);
-  if(version!==stateLoadVersion)return;state.art=art;
-  for(const aspect of ['wide','square'])Object.assign(state.background[aspect],{focusX:.5,focusY:.65,zoom:1});
-  refresh();status('底图已更换，现有文字与排版保留。');
- }catch(e){status(e.message);renderBackgroundControls();}
-}
-function renderArtGallery(){
- const group=$('artCategory').value,root=$('artGallery');root.replaceChildren();
- for(const art of library.filter(art=>group==='all'||art.group===group)){
-  const button=document.createElement('button');button.type='button';button.className='art-tile';button.dataset.art=art.id;button.setAttribute('aria-label','使用底图：'+art.name);button.setAttribute('aria-pressed',String(state.art===art.id));
-  const img=document.createElement('img');img.src=assets[art.id];img.alt='';img.loading='lazy';img.width=160;img.height=90;
-  const label=document.createElement('span');label.textContent=art.name;button.append(img,label);button.onclick=()=>void selectArt(art.id);root.append(button);
- }
-}
-let materialSeed=42;
-function materialOptions(){return{style:$('materialStyle').value,base:$('materialBase').value,accent:$('materialAccent').value,seed:materialSeed,intensity:Number($('materialIntensity').value)};}
-function previewMaterial(){try{window.CoverTextures.render($('materialPreview'),materialOptions());}catch(e){status(e.message);}}
-function restoreMaterialControls(recipe){materialSeed=recipe.seed;for(const [id,key]of [['materialStyle','style'],['materialBase','base'],['materialAccent','accent'],['materialIntensity','intensity']])$(id).value=recipe[key];previewMaterial();}
-async function applyMaterial(){
- const version=++stateLoadVersion,button=$('applyMaterial');button.disabled=true;status('正在生成材质底图…');
- try{
-  const recipe=materialOptions(),[w,h]=dimensionsFor(state).wide,c=makeCanvas(w,h);window.CoverTextures.render(c,recipe);
-  const data=c.toDataURL('image/png'),image=await loadImage(data);if(version!==stateLoadVersion)return;
-  images.custom=image;state.customBackground=data;state.art='custom';state.material=recipe;state.customLabel={paper:'自选纸张',canvas:'自选画布',wash:'自选淡彩',cutpaper:'自选拼纸'}[recipe.style];state.paper=recipe.base;state.style='full';
-  for(const aspect of ['wide','square'])Object.assign(state.background[aspect],{focusX:.5,focusY:.5,zoom:1});state.background.square.mode='cover';
-  refresh();status('底图已生成，现有文字保留。保存方案可一并保留颜色与材质。');
- }catch(e){status('未生成：'+e.message);}finally{button.disabled=false;}
-}
-function configureStudio(){
- const template=$('templateSelect'),blank=document.createElement('option');blank.value='blank';blank.textContent='纯底图 · 自由排版';template.append(blank);
- for(const preset of presets){const option=document.createElement('option');option.value=preset.id;option.textContent=preset.name;template.append(option);}template.value=presets[0].id;
- for(const group of [...new Set(library.map(a=>a.group))]){const optgroup=document.createElement('optgroup');optgroup.label=group;for(const art of library.filter(a=>a.group===group)){const option=document.createElement('option');option.value=art.id;option.textContent=art.name;optgroup.append(option);}$('artSelect').append(optgroup);}
- renderArtGallery();
- const palettes=[['苔绿纸','#f3eee2','#809185'],['雾蓝纸','#eff2ef','#7893a4'],['陶粉纸','#f6efea','#bc948c'],['麦金纸','#f7f1e2','#c0a363'],['浅灰纸','#efefeb','#8c9591']];
- for(const [name,base,accent]of palettes){const button=document.createElement('button');button.type='button';button.className='material-palette';button.title=name;button.setAttribute('aria-label',name);button.style.background=`linear-gradient(135deg,${base} 50%,${accent} 50%)`;button.onclick=()=>{$('materialBase').value=base;$('materialAccent').value=accent;previewMaterial();};$('materialPalettes').append(button);}
- previewMaterial();
- if(profile==='poster'){$('downloadUpload').hidden=true;$('preview').setAttribute('aria-label','图文首页图画布，可拖动可见元素');}
-}
 function installEvents(){
  // Finish the current IndexedDB transaction before an in-app page switch.
  for(const link of document.querySelectorAll('.editor-profiles a,.editor-back'))link.addEventListener('click',async event=>{
