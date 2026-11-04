@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>照片转绘 · 茶叶的实验室</title><meta name="description" content="厚涂油画、实景拼贴海报的画风目录。在 Codex 附上照片，按预设转绘。"><link rel="stylesheet" href="styles.css"><script defer src="catalog-data.js"></script><script defer src="app.js"></script></head>
+<body>
+<header class="site-header"><a class="brand" href="#top"><svg viewBox="0 0 42 42" aria-hidden="true"><path d="m7 9 25-3 3 29-25 2zM5 13l-1 24 24 2M13 15l9-1m-8 7 15-1m-14 7 10-1"/></svg><span>照片转绘</span></a><nav aria-label="页面导航"><a href="../../index.html">回到实验室</a><a href="#styles">画风目录</a><a href="#how">怎么用</a></nav></header>
+<main id="top">
+  <section class="intro"><div><p class="eyebrow">一张照片，也可以有另一种样子。</p><h1>把喜欢的画风，<br><span>慢慢收在这里。</span></h1><p class="intro-copy">挑一种感觉，复制口令，再到 Codex 附上照片。</p></div><aside class="intro-note"><span class="note-line"></span><p>真实的瞬间，<br>另一种手感。</p><span class="note-sign">照片 / 画 / 纸</span></aside></section>
+  <section id="styles" class="catalog-section"><div class="section-heading"><h2>现在可以用的</h2><span id="available-count"></span></div><div class="style-grid" id="available-styles"></div></section>
+  <section class="reserved-section"><div class="section-heading"><h2>给下一张灵感留个位置</h2><span>参考图到了，再慢慢补。</span></div><div class="reserved-grid" id="reserved-styles"></div><div class="collect-style"><p>又看到喜欢的画风了？带着参考图来，试好之后就收进目录。</p><button id="collect-style-button" class="details-button" type="button">复制收录口令 <span aria-hidden="true">↗</span></button></div></section>
+  <section id="how" class="how-section"><h2>选好之后</h2><ol><li><span>01</span><div><h3>复制喜欢的口令</h3><p>每种画风都有自己的做法。</p></div></li><li><span>02</span><div><h3>回到 Codex，附上照片</h3><p>把口令和待处理的照片一起发来。</p></div></li><li><span>03</span><div><h3>看效果，再调一点</h3><p>笔触、留白和颜色，可以继续说。</p></div></li></ol></section>
+  <p class="usage-note">网页供浏览与复制口令，实际转绘在 Codex 中完成。其他人使用口令时，也需要安装相应 Skill。</p>
+</main>
+<footer class="site-footer"><span>照片转绘 · 茶叶的实验室</span><span>先把喜欢的感觉留下。</span></footer>
+<dialog id="preset-dialog" aria-labelledby="dialog-title"><button class="dialog-close" type="button" aria-label="关闭预设详情">×</button><div class="dialog-layout"><figure class="dialog-image"><img id="dialog-image" alt=""><figcaption id="dialog-image-label"></figcaption></figure><div class="dialog-copy"><span id="dialog-kind" class="eyebrow"></span><h2 id="dialog-title"></h2><p id="dialog-summary"></p><dl id="dialog-facts"></dl><div class="command-block"><label for="dialog-command">带着这句口令去 Codex</label><textarea id="dialog-command" rows="4" readonly spellcheck="false"></textarea><button id="dialog-copy-button" class="primary-button" type="button">复制口令 <span aria-hidden="true">↗</span></button></div><p id="dialog-credit" class="credit"></p></div></div></dialog>
+<dialog id="manual-copy-dialog" aria-labelledby="manual-title"><button class="manual-close dialog-close" type="button" aria-label="关闭手动复制">×</button><h2 id="manual-title">选中这句口令，再复制</h2><p>浏览器没有完成自动复制，可以直接选中文字。</p><textarea id="manual-command" rows="5" readonly></textarea><button id="manual-select" class="secondary-button" type="button">选中全文</button></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body></html>
