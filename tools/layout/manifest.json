@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "application": "personal-studio-handoff",
+  "version": "902c20af7a12fce3",
+  "studio_url": "https://www.xunpuai.com/tools",
+  "purpose": "production",
+  "files": [
+    {
+      "path": "tools/cover/assets/personal.png",
+      "bytes": 2262855,
+      "sha256": "c613e1225358405487ec010b5c96c62e2cdd10e73f2fdd9a44932d3e45646d04"
+    },
+    {
+      "path": "tools/cover/assets/risk.png",
+      "bytes": 2464989,
+      "sha256": "7cd5cc5279e88f3c9491af009281404360bb7d20962815c345cc57c22f033f65"
+    },
+    {
+      "path": "tools/cover/index.html",
+      "bytes": 2922,
+      "sha256": "8bf86efcafd102a4c867702f0bd60d4fb080c1aa289db1f5ad53983c477bd084"
+    },
+    {
+      "path": "tools/layout/articles/index.html",
+      "bytes": 2939,
+      "sha256": "435536dca4dd0c70be4b815fecdaf025d6012fe2f288c0ef200acedbf2961ac5"
+    },
+    {
+      "path": "tools/layout/editors/moments/index.html",
+      "bytes": 2972,
+      "sha256": "b7a2aea4c9c97f3761d156750eb3f0e83e7f105effab9579a1c15c0a3b8e3b43"
+    },
+    {
+      "path": "tools/layout/handoff.css",
+      "bytes": 1210,
+      "sha256": "9a082129a2e1756bc6f5e593a0985201fc0299f84959adb7fb9678566f069278"
+    },
+    {
+      "path": "tools/layout/handoff.mjs",
+      "bytes": 3263,
+      "sha256": "82a2e447933080c4d112c3015d47ae5045dcccdc26ea4e6e4d4cd2df1c6c3bd9"
+    },
+    {
+      "path": "tools/layout/index.html",
+      "bytes": 2884,
+      "sha256": "c13d7172df23662c5c0dc9dae1a685661c744d9729749a941442431faea0f1b0"
+    },
+    {
+      "path": "tools/layout/legacy-drafts.mjs",
+      "bytes": 4012,
+      "sha256": "4be05ea7c1db4efbc1f73a3ad52300bcbdea35d7db97d0cae288c9c33e2a32bc"
+    },
+    {
+      "path": "tools/poster/index.html",
+      "bytes": 2918,
+      "sha256": "3fbd5e3f7ba9ab5a03e88cd64928dedb06a812d2f178f303281da2287d4e7f74"
+    }
+  ]
+}
